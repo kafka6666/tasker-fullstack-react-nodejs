@@ -1,4 +1,4 @@
-import { asyncHandler } from "../utils/async-handler.js";
+import { asyncHandler } from "../utils/async-handler.ts";
 
 const getProjectById = asyncHandler(async (req, res) => {
   const { id } = req.params;

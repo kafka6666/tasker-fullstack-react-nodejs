@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
-import { ApiError } from "../utils/api-error.js";
+import { ApiError } from "../utils/api-error.ts";
 
 // Define types for express-validator error objects
 interface ExpressValidatorError {

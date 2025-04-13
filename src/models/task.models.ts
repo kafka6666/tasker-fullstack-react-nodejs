@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { AvailableTaskStatuses, TaskStatusEnum } from "../utils/constants.js";
+import { AvailableTaskStatuses, TaskStatusEnum } from "../utils/constants.ts";
 
 interface ITask extends Document {
   title: string;

@@ -1,4 +1,4 @@
-import { asyncHandler } from "../utils/async-handler.js";
+import { asyncHandler } from "../utils/async-handler.ts";
 
 const registerUser = asyncHandler(async (req, res) => {
   const { email, username, password, role } = req.body;

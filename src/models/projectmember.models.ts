@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { AvailableUserRoles, UserRolesEnum } from "../utils/constants.js";
+import { AvailableUserRoles, UserRolesEnum } from "../utils/constants.ts";
 
 interface IProjectMember extends Document {
   user: mongoose.Types.ObjectId;
