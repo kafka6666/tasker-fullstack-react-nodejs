@@ -1,6 +1,21 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 import { AvailableTaskStatuses, TaskStatusEnum } from "../utils/constants.js";
-const taskSchema = new Schema(
+
+interface ITask extends Document {
+  title: string;
+  description?: string;
+  project: mongoose.Types.ObjectId;
+  assignedTo: mongoose.Types.ObjectId;
+  assignedBy: mongoose.Types.ObjectId;
+  status: string;
+  attachments: {
+    url: string;
+    mimetype: string;
+    size: number;
+  }[];
+}
+
+const taskSchema = new Schema<ITask>(
   {
     title: {
       type: String,
@@ -44,4 +59,6 @@ const taskSchema = new Schema(
   { timestamps: true },
 );
 
-export const Task = mongoose.model("Task", taskSchema);
+const Task = mongoose.model<ITask>("Task", taskSchema);
+
+export { Task, ITask };

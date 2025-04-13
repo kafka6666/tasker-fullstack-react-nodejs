@@ -1,9 +1,32 @@
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
-const userSchema = new Schema(
+interface IUser extends Document {
+  avatar: {
+    url: string;
+    localPath: string;
+  };
+  username: string;
+  email: string;
+  fullName?: string;
+  password: string;
+  isEmailVerified: boolean;
+  refreshToken?: string;
+  forgotPasswordToken?: string;
+  forgotPasswordExpiry?: Date;
+  emailVerificationToken?: string;
+  emailVerificationExpiry?: Date;
+
+  // Method declarations for instance methods
+  isPasswordCorrect(password: string): Promise<boolean>;
+  generateAccessToken(): string;
+  generateRefreshToken(): string;
+  generateTemporaryToken(): { unHashedToken: string; hashedToken: string; tokenExpiry: number };
+}
+
+const userSchema = new Schema<IUser>(
   {
     avatar: {
       type: {
@@ -61,35 +84,47 @@ const userSchema = new Schema(
   { timestamps: true },
 );
 
-userSchema.pre("save", async function (next) {
+userSchema.pre<IUser>("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
-userSchema.methods.isPasswordCorrect = async function (password) {
+userSchema.methods.isPasswordCorrect = async function (password: string) {
   return await bcrypt.compare(password, this.password);
 };
 
 userSchema.methods.generateAccessToken = function () {
+  const payload = {
+    _id: this._id as string,
+    email: this.email as string,
+    username: this.username as string,
+  };
+
+  const secretKey = process.env.ACCESS_TOKEN_SECRET!;
+  const expiresIn = process.env.ACCESS_TOKEN_EXPIRY!;
+
+  // Use type assertion to resolve TypeScript errors
   return jwt.sign(
-    {
-      _id: this._id,
-      email: this.email,
-      username: this.username,
-    },
-    process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY },
+    payload, 
+    secretKey, 
+    { expiresIn } as jwt.SignOptions
   );
 };
 
 userSchema.methods.generateRefreshToken = function () {
+  const payload = {
+    _id: this._id as string,
+  };
+
+  const secretKey = process.env.REFRESH_TOKEN_SECRET!;
+  const expiresIn = process.env.REFRESH_TOKEN_EXPIRY!;
+
+  // Use type assertion to resolve TypeScript errors
   return jwt.sign(
-    {
-      _id: this._id,
-    },
-    process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: process.env.REFRESH_TOKEN_EXPIRY },
+    payload, 
+    secretKey, 
+    { expiresIn } as jwt.SignOptions
   );
 };
 
@@ -112,4 +147,6 @@ userSchema.methods.generateTemporaryToken = function () {
   return { unHashedToken, hashedToken, tokenExpiry };
 };
 
-export const User = mongoose.model("User", userSchema);
+const User = mongoose.model<IUser>("User", userSchema);
+
+export { User, IUser };
