@@ -1,5 +1,6 @@
 import Mailgen from "mailgen";
 import nodemailer from "nodemailer";
+import { logger } from "./logger.ts";
 
 // Define the structure for email content
 interface MailgenContent {
@@ -62,9 +63,9 @@ const sendMail = async (options: MailOptions) => {
 
     try {
         await transporter.sendMail(mail);
-        console.log("Email sent successfully");
+        logger.info("Email sent successfully");
       } catch (error) {
-        console.error("Error sending email:", error);
+        logger.error("Error sending email:", error);
       }
 }
 

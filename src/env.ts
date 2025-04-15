@@ -9,6 +9,7 @@ dotenv.config({
 // Define environment variables schema
 const envSchema = z.object({
   MONGODB_URI: z.string(),
+  BASE_URL: z.string(),
   PORT: z.string().optional(),
   CORS_ORIGIN: z.string(),
   ACCESS_TOKEN_SECRET: z.string(),
@@ -19,6 +20,11 @@ const envSchema = z.object({
   MAILTRAP_SMTP_PORT: z.string(),
   MAILTRAP_SMTP_USER: z.string(),
   MAILTRAP_SMTP_PASS: z.string(),
+  JWT_COOKIE_EXPIRE_TIME: z.string(),
+  JWT_EXPIRE_TIME: z.string(),
+  JWT_SECRET: z.string(),
+  NODE_ENV: z.string(),
+  FRONTEND_URL: z.string(),
   FORGOT_PASSWORD_REDIRECT_URL: z.string().optional(),
 })
 

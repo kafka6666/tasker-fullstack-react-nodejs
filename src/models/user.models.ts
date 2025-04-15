@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import mongoose, { Schema, Document } from "mongoose";
+import { env } from "../env.ts";
 
 interface IUser extends Document {
   avatar: {
@@ -101,8 +102,8 @@ userSchema.methods.generateAccessToken = function () {
     username: this.username as string,
   };
 
-  const secretKey = process.env.ACCESS_TOKEN_SECRET!;
-  const expiresIn = process.env.ACCESS_TOKEN_EXPIRY!;
+  const secretKey = env.ACCESS_TOKEN_SECRET;
+  const expiresIn = env.ACCESS_TOKEN_EXPIRY;
 
   // Use type assertion to resolve TypeScript errors
   return jwt.sign(
@@ -117,8 +118,8 @@ userSchema.methods.generateRefreshToken = function () {
     _id: this._id as string,
   };
 
-  const secretKey = process.env.REFRESH_TOKEN_SECRET!;
-  const expiresIn = process.env.REFRESH_TOKEN_EXPIRY!;
+  const secretKey = env.REFRESH_TOKEN_SECRET;
+  const expiresIn = env.REFRESH_TOKEN_EXPIRY;
 
   // Use type assertion to resolve TypeScript errors
   return jwt.sign(
@@ -141,8 +142,8 @@ userSchema.methods.generateTemporaryToken = function () {
     .createHash("sha256")
     .update(unHashedToken)
     .digest("hex");
-  // This is the expiry time for the token (20 minutes)
-  const tokenExpiry = Date.now() + 20 * 60 * 1000; // 20 minutes;
+  // This is the expiry time for the token (60 minutes)
+  const tokenExpiry = Date.now() + 60 * 60 * 1000; // 60 minutes;
 
   return { unHashedToken, hashedToken, tokenExpiry };
 };

@@ -18,18 +18,18 @@ class ApiError extends Error {
    */
   constructor(
     public statusCode: number,
-    public message: string = "Something went wrong",
-    public data: object | null,
-    public success: boolean,
+    public message: string,
     public errors: ValidationError[],
     public stack: string = "",
+    public data?: object,
+    public success?: boolean
   ) {
     super(message);
     this.statusCode = statusCode;
-    this.data = data;
     this.message = message;
-    this.success = success;
     this.errors = errors;
+    this.data = data;
+    this.success = success || statusCode > 400;
 
     if (stack) {
       this.stack = stack;
